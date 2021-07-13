@@ -22,11 +22,11 @@ def get_rnd_event() -> int:
 
 def read_choice(message: str) -> bool:
     """Печать вопроса и чтение на него ответа, возвращает True в случае согласия, False в противном случае."""
-    i = 0
+    i = ""
     print(message)
-    while not (i == 1 or i == 2):
-        i = int(input("Ввести 1 - если ДА, 2 - если НЕТ : "))
-    return i == 1
+    while not (i == "1" or i == "2"):
+        i = input("Ввести 1 - если ДА, 2 - если НЕТ : ").strip()
+    return i == "1"
 
 
 def dragon_event() -> None:
@@ -36,11 +36,11 @@ def dragon_event() -> None:
     dragon_hp = random.randrange(1, 15)
     dragon_attack = random.randrange(1, 10)
     if read_choice(
-        "Встреча с чудовищем [жизни "
-        + str(dragon_hp)
-        + ", сила удара "
-        + str(dragon_attack)
-        + "], вступить в БОЙ ?"
+            "Встреча с чудовищем [жизни "
+            + str(dragon_hp)
+            + ", сила удара "
+            + str(dragon_attack)
+            + "], вступить в БОЙ ?"
     ):
         # чудовище отнимает у рыцаря число жизней, соответствующее его атаке
         hp -= dragon_attack
@@ -101,7 +101,7 @@ def game() -> None:
         else:
             apple_event()
     print(("ПОРАЖЕНИЕ В ИГРЕ...", "ПОБЕДА !!!")[hp > 0])
-    sys.exit()
+    sys.exit(1)
 
 
 # вызов игры
