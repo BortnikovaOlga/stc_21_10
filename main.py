@@ -1,10 +1,11 @@
 import random
+import sys
 
 DRAGON = 0
 SWORD = 1
 APPLE = 2
 # Соотношение появление событий в пропорции DRAGON:SWORD:APPLE
-PROBABILITY_EVENT = [7, 2, 2]
+PROBABILITY_EVENT = [7, 2, 7]
 # monster_counter - счетчик поверженных героем чудовищ,
 # hp - текущее состояние здоровье героя,
 # attack - текущая сила удара героя
@@ -13,33 +14,33 @@ hp = 10
 attack = 10
 
 
-def get_rnd_event():
-    """Генерирует случайное событие в игре"""
+def get_rnd_event() -> int:
+    """Генерирует случайное событие в игре."""
     global DRAGON, SWORD, APPLE, PROBABILITY_EVENT
     return random.choices([DRAGON, SWORD, APPLE], weights=PROBABILITY_EVENT)[0]
 
 
 def read_choice(message: str) -> bool:
-    """Печать вопроса и чтение на него ответа, возвращает True в случае согласия, False в противном случае"""
-    i = 0
-    print(message)
-    while not (i == 1 or i == 2):
-        i = int(input("Ввести 1 - если ДА, 2 - если НЕТ : "))
-    return i == 1
+    """Печать вопроса и чтение на него ответа, возвращает True в случае согласия, False в противном случае."""
+    i = ""
+    while not (i == "1" or i == "2"):
+        print(message)
+        i = input("Ввести 1 - если ДА, 2 - если НЕТ : ").strip()
+    return i == "1"
 
 
-def dragon_event():
-    """ Логика для события Встреча c чудовищем """
+def dragon_event() -> None:
+    """Логика для события Встреча c чудовищем."""
     global hp, attack, monster_counter
     # Генерация случайного чудовища
-    dragon_hp = random.randrange(1, 15)
-    dragon_attack = random.randrange(1, 10)
+    dragon_hp = random.randrange(1, 4)  # 15 было для реальной игры
+    dragon_attack = random.randrange(1, 4)  # 10 было для реальной игры
     if read_choice(
-            "Встреча с чудовищем [жизни "
+            "БОЙ с чудовищем жизни "
             + str(dragon_hp)
-            + ", сила удара "
+            + " сила удара "
             + str(dragon_attack)
-            + "], вступить в БОЙ ?"
+            + " вступить в БОЙ ?"
     ):
         # чудовище отнимает у рыцаря число жизней, соответствующее его атаке
         hp -= dragon_attack
@@ -54,38 +55,36 @@ def dragon_event():
         print("Вы спаслись от чудовища, продолжаем игру")
 
 
-def sword_event():
-    """ Логика для события Встреча нового меча """
+def sword_event() -> None:
+    """Логика для события Встреча нового меча."""
     global attack
     new_sword = random.randrange(6, 16)
 
-    if read_choice(
-            "Появился мечь, сила удара " + str(new_sword) + " Взять новый мечь ?"
-    ):
+    if read_choice("МЕЧ сила удара " + str(new_sword) + " Взять новый меч ?"):
         attack = new_sword
         print("Новая сила удара " + str(attack))
     else:
         print("Продолжаем игру со старым мечом")
 
 
-def apple_event():
-    """ Логика для события Яблко """
+def apple_event() -> None:
+    """Логика для события Яблоко."""
     global hp
-    apple_hp = random.randrange(1, 5)
+    apple_hp = random.randrange(1, 10)
     hp += apple_hp
-    print(
-        "Рыцарь съел яблоко, + "
-        + str(apple_hp)
-        + " жизни, "
-        + "теперь у вас "
-        + str(hp)
-        + " жизней"
-    )
+    print("ЯБЛОКО + " + str(apple_hp) + " теперь у вас " + str(hp) + " жизней")
 
 
-def game():
-    """ Логика игры """
+def game() -> None:
+    """Логика игры."""
     global hp, monster_counter
+    print(
+        "Игра Рыцарь и чудовища, цель игры - победить 10 чудовищ\n"
+        + "в ходе игры можно менять меч,\n"
+        + "чудовище возможно победить только при условии, когда у меча сила удара больше, чем жизней у чудовища,\n"
+        + "а количество жизней у рыцаря больше чем сила чудовища\n"
+        + "Рыцарь вступает в игру с 10 жизнями и мечом с ударом 10\n"
+    )
     while hp > 0 and monster_counter < 10:
         game_event = get_rnd_event()
         if game_event == DRAGON:
@@ -94,8 +93,14 @@ def game():
             sword_event()
         else:
             apple_event()
-    print(("ПОРАЖЕНИЕ В ИГРЕ...", "ПОБЕДА !!!")[hp > 0])
+    print(
+        "ПОБЕДА Вы победили " + str(monster_counter) + " чудовищ"
+        if hp > 0
+        else "ПОРАЖЕНИЕ В ИГРЕ..."
+    )
+    sys.exit(1)
 
 
 # вызов игры
-game()
+if __name__ == "__main__":
+    game()
