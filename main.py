@@ -5,7 +5,7 @@ DRAGON = 0
 SWORD = 1
 APPLE = 2
 # Соотношение появление событий в пропорции DRAGON:SWORD:APPLE
-PROBABILITY_EVENT = [7, 2, 2]
+PROBABILITY_EVENT = [7, 2, 7]
 # monster_counter - счетчик поверженных героем чудовищ,
 # hp - текущее состояние здоровье героя,
 # attack - текущая сила удара героя
@@ -23,8 +23,8 @@ def get_rnd_event() -> int:
 def read_choice(message: str) -> bool:
     """Печать вопроса и чтение на него ответа, возвращает True в случае согласия, False в противном случае."""
     i = ""
-    print(message)
     while not (i == "1" or i == "2"):
+        print(message)
         i = input("Ввести 1 - если ДА, 2 - если НЕТ : ").strip()
     return i == "1"
 
@@ -33,14 +33,14 @@ def dragon_event() -> None:
     """Логика для события Встреча c чудовищем."""
     global hp, attack, monster_counter
     # Генерация случайного чудовища
-    dragon_hp = random.randrange(1, 15)
-    dragon_attack = random.randrange(1, 10)
+    dragon_hp = random.randrange(1, 4)  # 15 было для реальной игры
+    dragon_attack = random.randrange(1, 4)  # 10 было для реальной игры
     if read_choice(
-            "Встреча с чудовищем [жизни "
+            "БОЙ с чудовищем жизни "
             + str(dragon_hp)
-            + ", сила удара "
+            + " сила удара "
             + str(dragon_attack)
-            + "], вступить в БОЙ ?"
+            + " вступить в БОЙ ?"
     ):
         # чудовище отнимает у рыцаря число жизней, соответствующее его атаке
         hp -= dragon_attack
@@ -60,7 +60,7 @@ def sword_event() -> None:
     global attack
     new_sword = random.randrange(6, 16)
 
-    if read_choice("Появился МЕЧ, сила удара " + str(new_sword) + " Взять новый меч ?"):
+    if read_choice("МЕЧ сила удара " + str(new_sword) + " Взять новый меч ?"):
         attack = new_sword
         print("Новая сила удара " + str(attack))
     else:
@@ -68,18 +68,11 @@ def sword_event() -> None:
 
 
 def apple_event() -> None:
-    """Логика для события Яблко."""
+    """Логика для события Яблоко."""
     global hp
-    apple_hp = random.randrange(1, 5)
+    apple_hp = random.randrange(1, 10)
     hp += apple_hp
-    print(
-        "Рыцарь съел яблоко, + "
-        + str(apple_hp)
-        + " жизни, "
-        + "теперь у вас "
-        + str(hp)
-        + " жизней"
-    )
+    print("ЯБЛОКО + " + str(apple_hp) + " теперь у вас " + str(hp) + " жизней")
 
 
 def game() -> None:
@@ -100,9 +93,14 @@ def game() -> None:
             sword_event()
         else:
             apple_event()
-    print(("ПОРАЖЕНИЕ В ИГРЕ...", "ПОБЕДА !!!")[hp > 0])
+    print(
+        "ПОБЕДА Вы победили " + str(monster_counter) + " чудовищ"
+        if hp > 0
+        else "ПОРАЖЕНИЕ В ИГРЕ..."
+    )
     sys.exit(1)
 
 
 # вызов игры
-game()
+if __name__ == "__main__":
+    game()
